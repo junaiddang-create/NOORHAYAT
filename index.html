@@ -499,6 +499,13 @@ body {
             color: #f8fafc !important;
         }
 </style>
+    <!-- PWA & Mobile Web App Settings -->
+    <link rel="manifest" href="manifest.webmanifest">
+    <meta name="theme-color" content="#064e3b">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="نورِ حیات">
+    <link rel="apple-touch-icon" href="icon-192.png">
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col selection:bg-emerald-600 selection:text-white dynamic-font-scale overflow-x-hidden">
 
@@ -520,8 +527,12 @@ body {
                 <p class="text-[10.5px] md:text-xs text-teal-200/90 font-bold -mt-0.5">جامع نظامِ حیات و پیشگی جدول · Islamic Life Planner</p>
             </div>
 
-            <!-- Left: Bell Alert + Language Switch Button -->
+            <!-- Left: Install Button + Language Switch + Bell Alert -->
             <div class="flex items-center gap-1">
+                <button type="button" onclick="triggerPWAInstall()" id="header-install-btn" class="px-2 py-1 bg-amber-400/25 hover:bg-amber-400/35 text-amber-300 border border-amber-400/50 rounded-xl text-[11px] font-bold flex items-center gap-1 transition active:scale-95 shadow-xs" title="ایپ انسٹال کریں (Install App)">
+                    <svg class="w-3.5 h-3.5 svg-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                    <span id="header-install-btn-label">انسٹال</span>
+                </button>
                 <button type="button" onclick="toggleAppLanguage()" class="px-2.5 py-1 bg-white/10 hover:bg-white/20 text-white rounded-xl text-[11px] font-bold border border-white/20 transition active:scale-95" title="زبان تبدیل کریں">
                     <span id="lang-btn-text">Roman</span>
                 </button>
@@ -591,6 +602,26 @@ body {
 
         <!-- ==================== ٹیب 1: آج کا جدول و دعائیں ==================== -->
         <div id="tab-dashboard" class="space-y-5">
+            <!-- PWA ڈاؤنلوڈ و انسٹال پرامپٹ بینر (Install Banner) -->
+            <div id="pwa-install-banner" class="bg-gradient-to-r from-emerald-900 via-teal-900 to-emerald-950 text-white border border-amber-400/30 rounded-2xl p-3 shadow-md flex items-center justify-between gap-2.5 transition">
+                <div class="flex items-center gap-2.5 min-w-0">
+                    <div class="w-8 h-8 rounded-xl bg-amber-400/20 text-amber-300 border border-amber-400/40 flex items-center justify-center shrink-0">
+                        <svg class="w-4 h-4 svg-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                    </div>
+                    <div class="min-w-0">
+                        <h4 class="text-xs font-bold text-amber-300 truncate" id="banner-install-title">نورِ حیات ایپ انسٹال کریں</h4>
+                        <p class="text-[10px] text-teal-200/90 truncate" id="banner-install-desc">ہوم اسکرین پر شامل کر کے آف لائن چلائیں</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-1.5 shrink-0">
+                    <button type="button" onclick="triggerPWAInstall()" class="px-3 py-1.5 bg-amber-400 hover:bg-amber-300 text-slate-950 rounded-xl text-xs font-black shadow-xs transition active:scale-95" id="banner-install-btn">
+                        انسٹال
+                    </button>
+                    <button type="button" onclick="dismissInstallBanner()" class="p-1.5 text-slate-300 hover:text-white rounded-lg transition" title="بند کریں">
+                        <svg class="w-3.5 h-3.5 svg-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
+                    </button>
+                </div>
+            </div>
             <!-- ==================== مسجد و ہلال کا خوبصورت بینر مع لائیو نماز الرٹ (Matching Image 1 & Image 2) ==================== -->
             <div class="relative overflow-hidden bg-gradient-to-b from-teal-900/10 via-emerald-50/50 to-white border border-teal-200/80 rounded-3xl p-5 shadow-xs text-center space-y-3">
                 <!-- Mosque Silhouette Line-art Vector matching Image 2 (1793208530590.png) & Image 1 -->
@@ -1331,11 +1362,15 @@ body {
 
             <!-- سیکشن 4: زیرِ مطالعہ کتب کی فہرست (Books Grid) -->
             <div class="space-y-3">
-                <div class="flex items-center justify-between">
+                <div class="flex items-center justify-between flex-wrap gap-2">
                     <h3 class="text-sm font-bold text-slate-800 flex items-center gap-1.5" id="reading-all-books-heading">
                         <svg class="w-3.5 h-3.5 text-amber-700 svg-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
-                        <span>زیرِ مطالعہ تمام کتب (All Reading Books):</span>
+                        <span>زیرِ مطالعہ کتب (دعوتِ اسلامی و دیگر کتب):</span>
                     </h3>
+                    <button type="button" onclick="openModal('add-book-modal')" class="px-3.5 py-1.5 bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-white text-xs rounded-xl font-bold shadow-xs flex items-center gap-1.5 transition active:scale-95" title="نئی کتاب شامل کریں">
+                        <svg class="w-3.5 h-3.5 svg-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+                        <span id="btn-add-new-book-inline">نئی کتاب شامل کریں</span>
+                    </button>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="books-grid-container"></div>
             </div>
@@ -1395,6 +1430,33 @@ body {
 
         <!-- ==================== ٹیب 6: ترتیبات و اوقاتِ نماز ==================== -->
         <div id="tab-settings" class="hidden space-y-4">
+            <!-- ایپ انسٹالیشن کارڈ (Dedicated PWA Install Card) -->
+            <div class="bg-gradient-to-br from-emerald-900 via-teal-900 to-emerald-950 text-white border border-emerald-700/60 rounded-3xl p-5 shadow-md space-y-3 relative overflow-hidden">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-10 h-10 rounded-2xl bg-amber-400/20 text-amber-300 border border-amber-400/40 flex items-center justify-center shrink-0">
+                            <svg class="w-5 h-5 svg-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-bold text-white flex items-center gap-2" id="settings-install-title">
+                                <span>موبائل یا کمپیوٹر پر ایپ انسٹال کریں</span>
+                                <span class="text-[10px] bg-amber-400 text-slate-900 font-extrabold px-2 py-0.2 rounded-full">PWA</span>
+                            </h3>
+                            <p class="text-[11px] text-teal-200/90 font-bold" id="settings-install-sub">انٹرنیٹ کے بغیر فوراً کھولنے اور ہوم اسکرین آئیکن کے لیے۔</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="pt-2 border-t border-emerald-800/80 flex flex-wrap items-center gap-2">
+                    <button type="button" onclick="triggerPWAInstall()" class="flex-1 min-w-[140px] px-4 py-2.5 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 font-black text-xs rounded-xl shadow-xs flex items-center justify-center gap-2 transition active:scale-95">
+                        <svg class="w-4 h-4 svg-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                        <span id="settings-install-btn-label">ابھی انسٹال کریں (Install App)</span>
+                    </button>
+                    <button type="button" onclick="openModal('install-guide-modal')" class="px-3.5 py-2.5 bg-white/10 hover:bg-white/20 text-white font-bold text-xs rounded-xl border border-white/20 transition active:scale-95 flex items-center gap-1.5">
+                        <svg class="w-3.5 h-3.5 svg-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"/><path stroke-linecap="round" stroke-width="2" d="M12 16v-4m0-4h.01"/></svg>
+                        <span id="settings-install-guide-label">رہنمائی (Guide)</span>
+                    </button>
+                </div>
+            </div>
             <!-- تھیم کا انتخاب (Theme Settings - Screen 10 & 11) -->
             <div class="bg-white border border-slate-200/90 rounded-3xl p-5 shadow-xs space-y-3">
                 <div class="flex items-center justify-between border-b border-slate-100 pb-2.5">
@@ -1570,6 +1632,68 @@ body {
     <!-- ==================== ماڈلز (Modals) ==================== -->
 
     <!-- 0. تاریخ پر کلک کرنے پر شیڈیول دیکھنے اور نیا شامل کرنے کا پریمیم ماڈل -->
+        <!-- سلائیڈ آؤٹ مینو بیک ڈراپ -->
+    <div id="side-drawer-backdrop" onclick="toggleSideDrawer()" class="fixed inset-0 bg-slate-950/50 backdrop-blur-xs z-50 opacity-0 pointer-events-none transition-opacity duration-300"></div>
+
+    <!-- سلائیڈ آؤٹ سائیڈ مینو (Side Drawer) -->
+    <div id="side-drawer" class="fixed top-0 right-0 bottom-0 w-72 max-w-[80vw] bg-white z-50 shadow-2xl transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col border-l border-slate-200">
+        <!-- ہیڈر -->
+        <div class="p-4 bg-gradient-to-r from-teal-900 to-emerald-900 text-white flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-xl bg-amber-400/20 text-amber-300 border border-amber-400/40 flex items-center justify-center font-bold">✦</div>
+                <div>
+                    <h3 class="font-bold text-base text-amber-300 font-nastaleeq">نورِ حیات</h3>
+                    <p class="text-[10px] text-teal-200">اسلامی نظامِ حیات</p>
+                </div>
+            </div>
+            <button type="button" onclick="toggleSideDrawer()" class="p-1.5 text-white/80 hover:text-white rounded-lg">
+                <svg class="w-5 h-5 svg-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+        </div>
+
+        <!-- مینو آئٹمز -->
+        <div class="flex-1 p-3 space-y-1.5 overflow-y-auto text-xs font-bold text-slate-700">
+            <!-- انسٹال بٹن -->
+            <button type="button" onclick="toggleSideDrawer(); triggerPWAInstall();" class="w-full p-2.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200 flex items-center gap-2.5 transition">
+                <svg class="w-4 h-4 text-amber-600 svg-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                <span class="flex-1 text-right">ایپ انسٹال کریں (Install App)</span>
+                <span class="text-[9px] bg-amber-400 text-slate-900 px-1.5 py-0.5 rounded-full font-black">PWA</span>
+            </button>
+
+            <button type="button" onclick="toggleSideDrawer(); switchTab('dashboard');" class="w-full p-2.5 rounded-xl hover:bg-slate-100 flex items-center gap-2.5 transition text-right">
+                <svg class="w-4 h-4 text-teal-700 svg-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                <span>آج کا دن (Dashboard)</span>
+            </button>
+
+            <button type="button" onclick="toggleSideDrawer(); switchTab('schedule24');" class="w-full p-2.5 rounded-xl hover:bg-slate-100 flex items-center gap-2.5 transition text-right">
+                <svg class="w-4 h-4 text-emerald-700 svg-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+                <span>روز کے اعمال و نماز</span>
+            </button>
+
+            <button type="button" onclick="toggleSideDrawer(); switchTab('travels');" class="w-full p-2.5 rounded-xl hover:bg-slate-100 flex items-center gap-2.5 transition text-right">
+                <svg class="w-4 h-4 text-indigo-700 svg-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" stroke-width="2"/><path stroke-linecap="round" stroke-width="2" d="M16 2v4M8 2v4M3 10h18"/></svg>
+                <span>پیشگی جدول و کیلنڈر</span>
+            </button>
+
+            <button type="button" onclick="toggleSideDrawer(); switchTab('reading');" class="w-full p-2.5 rounded-xl hover:bg-slate-100 flex items-center gap-2.5 transition text-right">
+                <svg class="w-4 h-4 text-amber-700 svg-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                <span>مطالعہ و قرآن ٹریکر</span>
+            </button>
+
+            <button type="button" onclick="toggleSideDrawer(); switchTab('settings');" class="w-full p-2.5 rounded-xl hover:bg-slate-100 flex items-center gap-2.5 transition text-right">
+                <svg class="w-4 h-4 text-slate-700 svg-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3" stroke-width="2"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+                <span>تمام ترتیبات (Settings)</span>
+            </button>
+        </div>
+
+        <!-- فوٹر -->
+        <div class="p-3 border-t border-slate-100 bg-slate-50 text-center">
+            <button type="button" onclick="toggleSideDrawer(); toggleAppLanguage();" class="w-full py-1.5 px-3 bg-white border border-slate-200 rounded-xl text-slate-700 text-xs font-bold hover:bg-slate-100 transition">
+                🌐 زبان: <span id="drawer-lang-text">اردو / Roman</span>
+            </button>
+        </div>
+    </div>
+
     <div id="date-schedule-modal" class="modal-backdrop">
         <div class="modal-card space-y-4 max-w-md">
             <div class="flex items-center justify-between border-b border-slate-100 pb-2.5">
@@ -1597,6 +1721,80 @@ body {
     </div>
 
     <!-- 1. نیا معمول شامل کرنے کا ماڈل -->
+    <!-- PWA انسٹال رہنمائی ماڈل (Install Guide Modal) -->
+    <div id="install-guide-modal" class="modal-backdrop">
+        <div class="modal-card space-y-4 max-w-md">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center">
+                        <svg class="w-5 h-5 svg-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-bold text-slate-900" id="install-modal-title">ایپ انسٹال کرنے کا طریقہ</h3>
+                        <p class="text-[11px] text-slate-500 font-bold" id="install-modal-sub">How to install Noor-e-Hayat App</p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeModal('install-guide-modal')" class="p-1.5 text-slate-400 hover:text-slate-600 rounded-lg">
+                    <svg class="w-5 h-5 svg-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+
+            <!-- Steps Tabs (Android / iPhone / PC) -->
+            <div class="space-y-3 text-xs">
+                <!-- Option 1: Direct Button -->
+                <div class="p-3 bg-emerald-50 border border-emerald-200 rounded-2xl text-center space-y-2">
+                    <p class="font-bold text-emerald-900" id="install-direct-tip">اگر آپ کا براؤزر خودکار انسٹال سپورٹ کرتا ہے:</p>
+                    <button type="button" onclick="triggerPWAInstallDirect()" class="w-full py-2.5 px-4 bg-emerald-700 hover:bg-emerald-800 text-white font-bold rounded-xl shadow-xs transition active:scale-95 flex items-center justify-center gap-2">
+                        <svg class="w-4 h-4 svg-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                        <span id="install-direct-btn-text">انسٹال کا پرامپٹ کھولیں (Install App)</span>
+                    </button>
+                </div>
+
+                <!-- Android Instructions -->
+                <div class="p-3 bg-slate-50 border border-slate-200 rounded-2xl space-y-1.5">
+                    <div class="flex items-center gap-2 font-bold text-slate-800">
+                        <span class="text-base">🤖</span>
+                        <span id="install-android-title">اینڈرائڈ (Android / Google Chrome):</span>
+                    </div>
+                    <ol class="list-decimal list-inside space-y-1 text-slate-600 pr-2" id="install-android-steps">
+                        <li>اوپر یا نیچے موجود <strong class="text-emerald-800">"انسٹال"</strong> بٹن پر ٹیپ کریں۔</li>
+                        <li>اگر پرامپٹ نہ آئے تو کروم کے دائیں جانب اوپر <strong>تین نقطوں (⋮)</strong> پر ٹیپ کریں۔</li>
+                        <li>مینو میں سے <strong>"Install app"</strong> یا <strong>"Add to Home screen"</strong> منتخب کریں۔</li>
+                    </ol>
+                </div>
+
+                <!-- iPhone / iOS Instructions -->
+                <div class="p-3 bg-amber-50/60 border border-amber-200 rounded-2xl space-y-1.5">
+                    <div class="flex items-center gap-2 font-bold text-amber-900">
+                        <span class="text-base">🍏</span>
+                        <span id="install-ios-title">آئی فون و آئی پیڈ (iPhone / iPad - Safari):</span>
+                    </div>
+                    <ol class="list-decimal list-inside space-y-1 text-slate-700 pr-2" id="install-ios-steps">
+                        <li>سفاری براؤزر میں نیچے موجود <strong>شیئر بٹن (Share)</strong> پر ٹیپ کریں۔</li>
+                        <li>تھوڑا نیچے اسکرول کر کے <strong>"Add to Home Screen" (ہوم اسکرین پر شامل کریں)</strong> منتخب کریں۔</li>
+                        <li>اوپر دائیں جانب <strong>"Add"</strong> دبائیں۔ ایپ ہوم اسکرین پر انسٹال ہو جائے گی!</li>
+                    </ol>
+                </div>
+
+                <!-- PC / Desktop Instructions -->
+                <div class="p-3 bg-slate-50 border border-slate-200 rounded-2xl space-y-1.5">
+                    <div class="flex items-center gap-2 font-bold text-slate-800">
+                        <span class="text-base">💻</span>
+                        <span id="install-pc-title">کمپیوٹر یا لیپ ٹاپ (Chrome / Edge):</span>
+                    </div>
+                    <p class="text-slate-600 pr-2" id="install-pc-desc">
+                        ایڈریس بار میں دائیں جانب موجود انسٹال کے نشان (<strong>📥 Install</strong>) پر کلک کریں اور "Install" دبا دیں۔
+                    </p>
+                </div>
+            </div>
+
+            <div class="pt-2 text-center">
+                <button type="button" onclick="closeModal('install-guide-modal')" class="w-full py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-xl transition">
+                    سمجھ گیا (Got it)
+                </button>
+            </div>
+        </div>
+    </div>
     <div id="add-task-modal" class="modal-backdrop">
         <div class="modal-card space-y-4">
             <div class="flex items-center justify-between border-b border-slate-100 pb-2">
@@ -1726,16 +1924,20 @@ body {
             <form id="book-form" onsubmit="saveBookItem(event)" class="space-y-3 text-xs">
                 <div>
                     <label class="block font-bold text-slate-700 mb-1">کتاب کا نام *</label>
-                    <input type="text" id="book-input-name" required placeholder="مثلاً فیضانِ سنت / بہارِ شریعت" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-2.5 focus:outline-none font-bold">
+                    <input type="text" id="book-input-name" required placeholder="مثلاً: فیضانِ سنت / بہارِ شریعت / صراط الجنان" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-2.5 focus:outline-none font-bold">
+                </div>
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">مصنف / مکتبہ (اختیاری)</label>
+                    <input type="text" id="book-input-author" placeholder="مثلاً: امیرِ اہلِ سنت / مکتبۃ المدینہ / صدر الشریعہ" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-2.5 focus:outline-none">
                 </div>
                 <div class="grid grid-cols-2 gap-2">
                     <div>
-                        <label class="block font-bold text-slate-700 mb-1">مصنف کا نام</label>
-                        <input type="text" id="book-input-author" placeholder="امیرِ اہلِ سنت / صدر الشریعہ" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-2.5 focus:outline-none">
+                        <label class="block font-bold text-slate-700 mb-1">کل صفحات *</label>
+                        <input type="number" id="book-input-total" min="1" required placeholder="مثلاً: 500" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-2 focus:outline-none font-bold">
                     </div>
                     <div>
-                        <label class="block font-bold text-slate-700 mb-1">کل صفحات *</label>
-                        <input type="number" id="book-input-total" min="1" required placeholder="500" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-2 focus:outline-none">
+                        <label class="block font-bold text-slate-700 mb-1">اب تک پڑھے گئے صفحات</label>
+                        <input type="number" id="book-input-read" min="0" value="0" placeholder="0" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-2 focus:outline-none font-bold">
                     </div>
                 </div>
                 <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
@@ -2163,17 +2365,26 @@ body {
                 console.error(e);
             }
 
-            if (!state.books || state.books.length === 0) {
-                state.books = [
-                    { id: 'book_1', name: 'صحیح البخاری شریف', author: 'امام محمد بن اسماعیل بخاری رحمہ اللہ', total: 600, read: 45, created: todayISO() },
-                    { id: 'book_2', name: 'سیرت النبی ﷺ', author: 'علامہ شبلی نعمانی و سید سلیمان ندوی رحمہما اللہ', total: 420, read: 28, created: todayISO() },
-                    { id: 'book_3', name: 'بہشتی زیور', author: 'حکیم الامت مولانا اشرف علی تھانوی رحمہ اللہ', total: 550, read: 15, created: todayISO() }
-                ];
-                const today = todayISO();
+            // صارف کی ہدایت: پرانی کتب کو ہٹا کر دعوتِ اسلامی کی کتب کا خودکار نفاذ اور نئی کتب شامل کرنے کا اختیار
+            const hasOldNonDwiBooks = (state.books || []).some(b => 
+                (b.name && (b.name.includes('بہشتی زیور') || b.name.includes('صحیح البخاری') || b.name.includes('سیرت النبی'))) ||
+                (b.author && (b.author.includes('تھانوی') || b.author.includes('نعمانی')))
+            );
+
+            const dawateIslamiDefaultBooks = [
+                { id: 'dwi_book_1', name: 'فیضانِ سنت (جلد اول)', author: 'امیرِ اہلِ سنت حضرت علامہ مولانا محمد الیاس عطار قادری دامت برکاتہم العالیہ', total: 1548, read: 0, created: todayISO() },
+                { id: 'dwi_book_2', name: 'صراط الجنان فی تفسیر القرآن (جلد اول)', author: 'مفتی محمد قاسم قادری / مکتبۃ المدینہ', total: 850, read: 0, created: todayISO() },
+                { id: 'dwi_book_3', name: 'بہارِ شریعت (Bahar-e-Shariat)', author: 'صدر الشریعہ مفتی محمد امجد علی اعظمی علیہ الرحمہ / تخریج مکتبۃ المدینہ', total: 1250, read: 0, created: todayISO() },
+                { id: 'dwi_book_4', name: 'مکاشفۃ القلوب (Mukashafatul Quloob)', author: 'امام محمد بن محمد غزالی علیہ الرحمہ / مترجم مکتبۃ المدینہ', total: 680, read: 0, created: todayISO() },
+                { id: 'dwi_book_5', name: 'نیکی کی دعوت (Naiki Ki Dawat)', author: 'امیرِ اہلِ سنت علامہ مولانا محمد الیاس عطار قادری دامت برکاتہم العالیہ', total: 614, read: 0, created: todayISO() },
+                { id: 'dwi_book_6', name: 'جہنم میں لے جانے والے اعمال', author: 'علامہ احمد بن حجر ہیتمی مکی علیہ الرحمہ / مترجم مکتبۃ المدینہ', total: 840, read: 0, created: todayISO() }
+            ];
+
+            if (!state.books || state.books.length === 0 || hasOldNonDwiBooks || state.booksVersion !== 'dwi_v2') {
+                state.books = dawateIslamiDefaultBooks;
+                state.booksVersion = 'dwi_v2';
                 state.dailyReadingLogs = state.dailyReadingLogs || {};
-                if (!state.dailyReadingLogs[today]) {
-                    state.dailyReadingLogs[today] = { 'book_1': 10, 'book_2': 5 };
-                }
+                saveStorageData();
             }
             if (!state.dailyReadingTarget) state.dailyReadingTarget = 20;
             if (!state.dailyReadingLogs) state.dailyReadingLogs = {};
@@ -2796,6 +3007,19 @@ body {
             if ($('tomorrow-add-btn-label')) $('tomorrow-add-btn-label').textContent = isRoman ? 'Kal ka jadwal darj karen' : 'کل کا جدول درج کریں';
             if ($('tomorrow-view-btn-label')) $('tomorrow-view-btn-label').textContent = isRoman ? 'Paishgi Jadwal' : 'پیشگی جدول';
             if ($('side-settings-text')) $('side-settings-text').textContent = isRoman ? 'Settings' : 'سیٹنگ';
+            if ($('header-install-btn-label')) $('header-install-btn-label').textContent = isRoman ? 'Install' : 'انسٹال';
+            if ($('banner-install-title')) $('banner-install-title').textContent = isRoman ? 'Noor-e-Hayat App Install Karen' : 'نورِ حیات ایپ انسٹال کریں';
+            if ($('banner-install-desc')) $('banner-install-desc').textContent = isRoman ? 'Home screen par shamil kar ke offline chalayein' : 'ہوم اسکرین پر شامل کر کے آف لائن چلائیں';
+            if ($('banner-install-btn')) $('banner-install-btn').textContent = isRoman ? 'Install' : 'انسٹال';
+            if ($('settings-install-title')) {
+                const badge = '<span class="text-[10px] bg-amber-400 text-slate-900 font-extrabold px-2 py-0.2 rounded-full">PWA</span>';
+                $('settings-install-title').innerHTML = `<span>${isRoman ? 'Mobile ya Computer par App Install Karen' : 'موبائل یا کمپیوٹر پر ایپ انسٹال کریں'}</span> ${badge}`;
+            }
+            if ($('settings-install-sub')) $('settings-install-sub').textContent = isRoman ? 'Internet ke baghair foran kholne aur home screen icon ke liye.' : 'انٹرنیٹ کے بغیر فوراً کھولنے اور ہوم اسکرین آئیکن کے لیے۔';
+            if ($('settings-install-btn-label')) $('settings-install-btn-label').textContent = isRoman ? 'Abhi Install Karen (Install App)' : 'ابھی انسٹال کریں (Install App)';
+            if ($('settings-install-guide-label')) $('settings-install-guide-label').textContent = isRoman ? 'Rahnumai (Guide)' : 'رہنمائی (Guide)';
+            if ($('install-modal-title')) $('install-modal-title').textContent = isRoman ? 'App Install Karne Ka Tariqa' : 'ایپ انسٹال کرنے کا طریقہ';
+            if ($('drawer-lang-text')) $('drawer-lang-text').textContent = isRoman ? 'اردو' : 'Roman';
             if ($('header-sub-text')) $('header-sub-text').textContent = t.appSubtitle;
             if ($('header-english-label')) $('header-english-label').textContent = t.englishDateLabel;
             if ($('header-islamic-label')) $('header-islamic-label').textContent = t.islamicDateLabel;
@@ -2874,6 +3098,8 @@ body {
             if ($('dalail-select-hizb-label')) $('dalail-select-hizb-label').textContent = t.dalailSelectHizbLabel || '';
             if ($('dalail-auto-day-tip')) $('dalail-auto-day-tip').textContent = t.dalailAutoDayTip || '';
             if ($('dalail-pages-read-label')) $('dalail-pages-read-label').textContent = t.dalailPagesReadLabel || '';
+            if ($('btn-add-new-book-inline')) $('btn-add-new-book-inline').textContent = isRoman ? 'Nayi Kitab Shamil Karen' : 'نئی کتاب شامل کریں';
+            if ($('reading-add-book-btn-label')) $('reading-add-book-btn-label').textContent = isRoman ? 'Nayi Kitab Shamil Karen' : 'نئی کتاب شامل کریں';
             if ($('reading-all-books-heading')) {
                 const sp = $('reading-all-books-heading').querySelector('span');
                 if (sp) sp.textContent = t.readingAllBooksHeading || '';
@@ -4214,19 +4440,23 @@ body {
 
         function saveBookItem(e) {
             e.preventDefault();
+            const readVal = parseInt($('book-input-read') ? $('book-input-read').value : 0) || 0;
+            const totalVal = parseInt($('book-input-total').value) || 100;
             const bookObj = {
                 id: 'book_' + Date.now(),
                 name: $('book-input-name').value.trim(),
-                author: $('book-input-author').value.trim(),
-                total: parseInt($('book-input-total').value) || 100,
-                read: 0,
+                author: $('book-input-author').value.trim() || 'مکتبۃ المدینہ (دعوتِ اسلامی)',
+                total: totalVal,
+                read: Math.min(readVal, totalVal),
                 created: todayISO()
             };
+            if (!state.books) state.books = [];
             state.books.push(bookObj);
             saveStorageData();
             closeModal('add-book-modal');
             $('book-form').reset();
-            showToast('کتاب شامل کر لی گئی ✓');
+            triggerCompletionFeedback('success');
+            showToast(state.lang === 'roman' ? 'Nayi kitab kamyabi se shamil kar li gayi ✓' : 'نئی کتاب کامیابی سے شامل کر لی گئی ✓');
             renderBooksTracker();
             renderDailyReadingSummary();
         }
@@ -4770,6 +5000,73 @@ body {
 
         function escapeHtml(str) {
             return String(str || '').replace(/[&<>"']/g, m => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m]));
+        }
+
+        // ==================== PWA INSTALLATION SYSTEM ====================
+        let deferredInstallPrompt = null;
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredInstallPrompt = e;
+            const hBtn = $('header-install-btn');
+            if (hBtn) hBtn.classList.remove('hidden');
+            const banner = $('pwa-install-banner');
+            if (banner && !localStorage.getItem('pwa_banner_dismissed')) {
+                banner.classList.remove('hidden');
+            }
+        });
+
+        window.addEventListener('appinstalled', () => {
+            deferredInstallPrompt = null;
+            const hBtn = $('header-install-btn');
+            if (hBtn) hBtn.classList.add('hidden');
+            const banner = $('pwa-install-banner');
+            if (banner) banner.classList.add('hidden');
+            triggerCompletionFeedback('success');
+            showToast(state.lang === 'roman' ? 'Noor-e-Hayat App kamyabi se install ho gayi! ✓' : 'ماشاءاللہ! نورِ حیات ایپ کامیابی سے انسٹال ہو گئی! ✓');
+        });
+
+        function triggerPWAInstall() {
+            triggerCompletionFeedback('click');
+            if (deferredInstallPrompt) {
+                deferredInstallPrompt.prompt();
+                deferredInstallPrompt.userChoice.then(choiceResult => {
+                    if (choiceResult.outcome === 'accepted') {
+                        showToast(state.lang === 'roman' ? 'App install ho rahi hai...' : 'ایپ انسٹال کی جا رہی ہے...');
+                    }
+                    deferredInstallPrompt = null;
+                });
+            } else {
+                openModal('install-guide-modal');
+            }
+        }
+
+        function triggerPWAInstallDirect() {
+            closeModal('install-guide-modal');
+            if (deferredInstallPrompt) {
+                deferredInstallPrompt.prompt();
+                deferredInstallPrompt.userChoice.then(choiceResult => {
+                    if (choiceResult.outcome === 'accepted') {
+                        showToast(state.lang === 'roman' ? 'App install ho rahi hai...' : 'ایپ انسٹال کی جا رہی ہے...');
+                    }
+                    deferredInstallPrompt = null;
+                });
+            } else {
+                showToast(state.lang === 'roman' ? 'Browser menu (⋮ ya Share) se "Add to Home Screen" par tap karen' : 'براؤزر کے مینو (تین نقطے یا شیئر) سے "Add to Home screen" منتخب کریں');
+            }
+        }
+
+        function dismissInstallBanner() {
+            const banner = $('pwa-install-banner');
+            if (banner) banner.classList.add('hidden');
+            localStorage.setItem('pwa_banner_dismissed', 'true');
+        }
+
+        // Register Service Worker for Offline PWA
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js').catch(() => {});
+            });
         }
 
         function renderAll() {
